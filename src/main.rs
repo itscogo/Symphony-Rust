@@ -2,15 +2,15 @@ use std::io;
 
 fn main() {
 
-    let mut Users: Vec<User> = vec![];
-    Users.push(User{
+    let mut users: Vec<User> = vec![];
+    users.push(User{
        name: String::from("Josh"),
        id: 0,
        active: true,
         charge_history: vec![],
         current_checkouts: vec![],
     });
-    Users.push(User{
+    users.push(User{
        name: String::from("Bob Vance"),
        id: 1,
        active: true,
@@ -18,19 +18,20 @@ fn main() {
         current_checkouts: vec![],
     });
    
-    let mut Items: Vec<Item> = vec![];
-    Items.push(Item {
+    let mut items: Vec<Item> = vec![];
+    items.push(Item {
         name: String::from("Harry Potter"),
         id: 0,
         status: Status::CheckedOut,
         genre: Genre::Fantasy,
         branch: Branch::PointCook,
     });
-    Items.push(Item {
+    items.push(Item {
         name: String::from("The accidental medium"),
         id: 1,
         status: Status::OnShelf,
-        
+        branch: Branch::Hoppers,
+        genre: Genre::Fantasy,
     });
    
     let mut id_count = 2;
@@ -39,9 +40,9 @@ fn main() {
         println!("1. Create new user");
         println!("2. Display all users");
         println!("3. Display user");
-        println!("4. Display Items");
+        println!("4. Display items");
         println!("5. Checkout Item");
-        println!("6. Checkin Item")
+        println!("6. Checkin Item");
 
        
         let mut input_choice = String::new();
@@ -52,10 +53,10 @@ fn main() {
        
         let trimmed = input_choice.trim();
         match trimmed.parse::<u8>(){
-           Ok(i) if i == 1 => Users = add_new_user(Users, id_count),
-           Ok(i) if i == 2 => Users = display_users(Users),
-           Ok(i) if i == 3 => Users = display_user(Users),
-           Ok(i) if i == 4 => Items = display_items(Items),
+           Ok(i) if i == 1 => add_new_user(&mut users, id_count),
+           Ok(i) if i == 2 => display_users(&mut users),
+           Ok(i) if i == 3 => display_user(&mut users),
+           Ok(i) if i == 4 => display_items(&mut items),
            Ok(i) => println!("{} was not a choice", i),
            Err(..) => println!("ERROR: {} is not an integer", trimmed),
         };
@@ -90,7 +91,7 @@ enum Status {
 #[derive(Debug)]
 enum Genre {
     Fiction,
-    Non-Fiction, 
+    NonFiction, 
     Parenting,
     Society,
     Health, 
@@ -108,14 +109,13 @@ enum Branch {
     Williamslanding,
 }
 
-fn display_items(Items: Vec<Item>) -> Vec<Item>{
-    for item in &Items{
+fn display_items(items: &mut Vec<Item>){
+    for item in items.iter_mut(){
         println!("{:?}", item);
     };
-  return Items  
 }
 
-fn display_user(Users: Vec<User>) -> Vec<User>{
+fn display_user(users: &mut Vec<User>){
    
     println!("Enter user ID");
 
@@ -128,7 +128,7 @@ fn display_user(Users: Vec<User>) -> Vec<User>{
     match id_trimmed.parse::<u64> (){
         Ok(i) => {
             let mut found = false;
-            for user in &Users{
+            for user in users.iter_mut(){
                 if user.id == i {
                     println!("{:?}", user);
                     found = true;
@@ -141,19 +141,15 @@ fn display_user(Users: Vec<User>) -> Vec<User>{
         },
         Err(..) => println!("Error: {} not a number", id_trimmed),
     }
-   
-    return Users
 }
 
-fn display_users(Users: Vec<User>) -> Vec<User>{
-    for user in &Users{
+fn display_users(users: &mut Vec<User>){
+    for user in users.iter_mut(){
         println!("{:?}", user);
-    };
-
-    return Users;    
+    };   
 }
 
-fn add_new_user(mut Users: Vec<User>, mut id_count: u64) -> Vec<User>{
+fn add_new_user(users: &mut Vec<User>, mut id_count: u64) {
    
     println!("Name: ");
     let mut name = String::new();
@@ -161,7 +157,7 @@ fn add_new_user(mut Users: Vec<User>, mut id_count: u64) -> Vec<User>{
                 .read_line(&mut name)
                 .expect("Error");
                
-    Users.push (User{
+    users.push (User{
         name : name,
         id : id_count ,
         active: true,
@@ -169,5 +165,4 @@ fn add_new_user(mut Users: Vec<User>, mut id_count: u64) -> Vec<User>{
         current_checkouts: vec![],
     });
     id_count +=1;
-     return Users;
 }
