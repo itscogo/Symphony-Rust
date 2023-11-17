@@ -1,5 +1,9 @@
 use std::io;
 
+mod Users; 
+use Users::User;
+
+
 fn main() {
 
     let mut users: Vec<User> = vec![];
@@ -61,15 +65,6 @@ fn main() {
            Err(..) => println!("ERROR: {} is not an integer", trimmed),
         };
     }
-}
-
-#[derive(Debug)]
-struct User{
-    name: String,
-    id: u64,
-    active: bool,
-    charge_history: Vec<u32>,
-    current_checkouts: Vec<u32>,
 }
 
 #[derive(Debug)]
